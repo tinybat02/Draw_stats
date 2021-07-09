@@ -102,7 +102,7 @@ export const countUnique = (
     data.push({ timestamp: Number(timestamp), Only_1, More_1 });
   });
 
-  return data;
+  return data.slice(-6);
 };
 
 export const convertGeoJSON = (features: Feature[]) => {
