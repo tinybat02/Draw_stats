@@ -1,0 +1,29 @@
+{
+  "name": "draw-and-stats",
+  "version": "1.0.0",
+  "description": "Draw Stats",
+  "scripts": {
+    "build": "grafana-toolkit plugin:build",
+    "test": "grafana-toolkit plugin:test",
+    "dev": "grafana-toolkit plugin:dev",
+    "watch": "grafana-toolkit plugin:dev --watch"
+  },
+  "author": "Nam Le",
+  "license": "MIT",
+  "devDependencies": {
+    "@grafana/data": "next",
+    "@grafana/toolkit": "next",
+    "@grafana/ui": "next",
+    "@types/ol": "^6.3.1"
+  },
+  "dependencies": {
+    "@nivo/bar": "^0.72.0",
+    "@nivo/core": "^0.72.0",
+    "@turf/helpers": "^6.1.4",
+    "@turf/points-within-polygon": "^5.1.5",
+    "dayjs": "^1.10.6",
+    "js-client-file-downloader": "^1.0.7",
+    "nanoid": "^3.1.12",
+    "ol": "^6.4.3"
+  }
+}

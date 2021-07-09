@@ -1,0 +1,25 @@
+{
+  "type": "panel",
+  "name": "Draw Stats",
+  "id": "id-draw-and-stats",
+  "dataFormats": ["table"],
+  "info": {
+    "description": "Draw Stats",
+    "author": {
+      "name": "Nam Le"
+    },
+    "keywords": [],
+    "logos": {
+      "small": "img/stats.svg",
+      "large": "img/stats.svg"
+    },
+    "screenshots": [],
+    "version": "%VERSION%",
+    "updated": "%TODAY%"
+  },
+
+  "dependencies": {
+    "grafanaVersion": "6.3.x",
+    "plugins": []
+  }
+}

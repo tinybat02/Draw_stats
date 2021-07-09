@@ -1,0 +1,16 @@
+.icon-download {
+  cursor: pointer;
+  margin-left: 1em;
+}
+
+.icon-download:active {
+  transform: translateY(4px);
+}
+
+.btn-ext {
+  margin-left: 0.5em;
+}
+
+.btn-ext:active {
+  transform: translateY(3px);
+}
