@@ -10,7 +10,7 @@ export const MainEditor: React.FC<PanelEditorProps<PanelOptions>> = ({ options, 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
 
-    setInputs(prevState => ({
+    setInputs((prevState) => ({
       ...prevState,
       [name]: value,
     }));
@@ -44,12 +44,12 @@ export const MainEditor: React.FC<PanelEditorProps<PanelOptions>> = ({ options, 
             onChange={handleChange}
           />
           <FormField
-            label="Additional Tile"
+            label="Initial Zoom"
             labelWidth={10}
-            inputWidth={80}
-            type="text"
-            name="tile_url"
-            value={inputs.tile_url}
+            inputWidth={40}
+            type="number"
+            name="zoom_level"
+            value={inputs.zoom_level}
             onChange={handleChange}
           />
           <FormField
@@ -59,6 +59,15 @@ export const MainEditor: React.FC<PanelEditorProps<PanelOptions>> = ({ options, 
             type="number"
             name="zoom_level"
             value={inputs.zoom_level}
+            onChange={handleChange}
+          />
+          <FormField
+            label="Timezone"
+            labelWidth={10}
+            inputWidth={40}
+            type="text"
+            name="timezone"
+            value={inputs.timezone}
             onChange={handleChange}
           />
         </div>
