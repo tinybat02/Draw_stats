@@ -30,7 +30,8 @@ interface State {
   isDrawing: boolean;
   featureName: string;
   selectedFeature: Feature | null;
-  chartData: Array<{ timestamp: number; Only_1: number; More_1: number }>;
+  // chartData: Array<{ timestamp: number; Only_1: number; More_1: number }>;
+  chartData: Array<{ timestamp: number; Customers: number }>;
 }
 
 export class MainPanel extends PureComponent<Props, State> {
@@ -408,7 +409,7 @@ export class MainPanel extends PureComponent<Props, State> {
           >
             <ResponsiveBar
               data={chartData}
-              keys={['Only_1', 'More_1']}
+              keys={['Customers']}
               indexBy="timestamp"
               margin={{ top: 20, right: 30, bottom: 30, left: 50 }}
               padding={0.15}

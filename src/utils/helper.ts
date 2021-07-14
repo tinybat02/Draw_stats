@@ -20,7 +20,6 @@ interface Item {
 
 export const processDataES = (data: Item[]) => {
   data.reverse();
-  // const perDeviceCoord: { [key: string]: [number, number][] } = {};
 
   const heatPoints: Feature[] = [];
 
@@ -45,21 +44,10 @@ export const processDataES = (data: Item[]) => {
     if (!obj[time_pivot][el.hash_id]) obj[time_pivot][el.hash_id] = [[el.longitude, el.latitude]];
     else obj[time_pivot][el.hash_id].push([el.longitude, el.latitude]);
 
-    // if (perDeviceCoord[elm.hash_id]) {
-    //   perDeviceCoord[elm.hash_id] = [[elm.longitude, elm.latitude]];
-    //   // perDeviceTime[elm.hash_id] = [elm.timestamp];
-    // } else {
-    //   perDeviceCoord[elm.hash_id].push([elm.longitude, elm.latitude]);
-    //   // perDeviceTime[elm.hash_id].push(elm.timestamp);
-    // }
-
     heatPoints.push(new Feature(new OlPoint([el.longitude, el.latitude]).transform('EPSG:4326', 'EPSG:3857')));
   });
 
   const perDevice: { [key: string]: { [key: string]: FeatureCollection<Point> } } = {};
-  // Object.keys(perDeviceCoord).map((hash) => {
-  //   perDevice[hash] = points(perDeviceCoord[hash]);
-  // });
 
   Object.keys(obj).map((time) => {
     if (!perDevice[time]) perDevice[time] = {};
@@ -80,29 +68,23 @@ export const countUnique = (
   coord: [number, number][],
   perDevice: { [key: string]: { [key: string]: FeatureCollection<Point> } }
 ) => {
-  // let count1 = 0;
-  // let count2 = 0;
   const polygonGeoJSON = polygon([coord]);
-  // Object.keys(perDevice).map((hash) => {
-  //   const ptsWithin = pointsWithinPolygon(perDevice[hash], polygonGeoJSON);
-  //   if (ptsWithin.features.length == 1) count1++;
-  //   if (ptsWithin.features.length > 1) count2++;
-  // });
-  // return `${count1}/${count2}`;
-
-  const data: { timestamp: number; Only_1: number; More_1: number }[] = [];
+  // const data: { timestamp: number; Only_1: number; More_1: number }[] = [];
+  const data: { timestamp: number; Customers: number }[] = [];
   Object.keys(perDevice).map((timestamp) => {
-    let Only_1 = 0,
-      More_1 = 0;
+    let Customers = 0;
+    /* Only_1 = 0,
+      More_1 = 0; */
     Object.keys(perDevice[timestamp]).map((hash) => {
       const count = pointsWithinPolygon(perDevice[timestamp][hash], polygonGeoJSON).features.length;
-      if (count == 1) Only_1++;
-      if (count > 1) More_1++;
+      // if (count == 1) Only_1++;
+      // if (count > 1) More_1++;
+      if (count >= 1) Customers++;
     });
-    data.push({ timestamp: Number(timestamp), Only_1, More_1 });
+    data.push({ timestamp: Number(timestamp), Customers });
   });
 
-  return data.slice(-6);
+  return data.slice(-12);
 };
 
 export const convertGeoJSON = (features: Feature[]) => {
