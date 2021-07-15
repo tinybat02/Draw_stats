@@ -424,7 +424,7 @@ export class MainPanel extends PureComponent<Props, State> {
                 tickRotation: -50,
                 renderTick: (tick: any) => {
                   return (
-                    <g transform={`translate(${tick.x},${tick.y + 22})`}>
+                    <g transform={`translate(${tick.x},${tick.y + 22}) rotate(-50)`}>
                       <line stroke="#ccc" strokeWidth={1.5} y1={-22} y2={-12} />
                       <text
                         textAnchor="middle"
