@@ -421,7 +421,7 @@ export class MainPanel extends PureComponent<Props, State> {
               axisBottom={{
                 tickSize: 2,
                 tickPadding: 2,
-                tickRotation: 0,
+                tickRotation: -50,
                 renderTick: (tick: any) => {
                   return (
                     <g transform={`translate(${tick.x},${tick.y + 22})`}>
