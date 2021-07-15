@@ -44,12 +44,12 @@ export const MainEditor: React.FC<PanelEditorProps<PanelOptions>> = ({ options, 
             onChange={handleChange}
           />
           <FormField
-            label="Initial Zoom"
+            label="Tile"
             labelWidth={10}
             inputWidth={40}
-            type="number"
-            name="zoom_level"
-            value={inputs.zoom_level}
+            type="text"
+            name="tile_url"
+            value={inputs.tile_url}
             onChange={handleChange}
           />
           <FormField
