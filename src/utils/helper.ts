@@ -84,7 +84,7 @@ export const countUnique = (
     data.push({ timestamp: Number(timestamp), Customers });
   });
 
-  return data.slice(-12);
+  return data.slice(-18);
 };
 
 export const convertGeoJSON = (features: Feature[]) => {
