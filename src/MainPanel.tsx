@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import { PanelProps } from '@grafana/data';
-import { PanelOptions, Buffer } from 'types';
+import { PanelOptions, Frame } from 'types';
 import { Map, View } from 'ol';
 import { XYZ, Vector as VectorSource } from 'ol/source';
 import { Tile as TileLayer, Vector as VectorLayer } from 'ol/layer';
@@ -19,7 +19,7 @@ import GeoJSON from 'ol/format/GeoJSON';
 import { unByKey } from 'ol/Observable';
 import { EventsKey } from 'ol/events';
 import { ResponsiveBar } from '@nivo/bar';
-import { processDataES, countUnique, convertGeoJSON, formatEpoch } from './utils/helper';
+import { /* processDataES,  */ processData, countUnique, convertGeoJSON, formatEpoch } from './utils/helper';
 import Icon from './img/save_icon.svg';
 import { jsFileDownloader } from 'js-client-file-downloader';
 import './style/main.css';
@@ -31,7 +31,8 @@ interface State {
   featureName: string;
   selectedFeature: Feature | null;
   // chartData: Array<{ timestamp: number; Only_1: number; More_1: number }>;
-  chartData: Array<{ timestamp: number; Customers: number }>;
+  chartData: Array<{ timestamp: number; 'By Device': number }>;
+  keys: string[];
 }
 
 export class MainPanel extends PureComponent<Props, State> {
@@ -45,12 +46,14 @@ export class MainPanel extends PureComponent<Props, State> {
   snap: Snap;
   select: Select;
   perDevice: { [key: string]: { [key: string]: FeatureCollection<Point> } } | null = null;
+  perArea: { [key: string]: { [key: string]: number } } = {};
 
   state: State = {
     isDrawing: true,
     featureName: '',
     selectedFeature: null,
     chartData: [],
+    keys: [],
   };
 
   componentDidMount() {
@@ -160,7 +163,7 @@ export class MainPanel extends PureComponent<Props, State> {
 
       if (this.perDevice) {
         const converted = ft.getCoordinates()[0].map((elm) => transform(elm, 'EPSG:3857', 'EPSG:4326'));
-        const count = countUnique(converted as [number, number][], this.perDevice);
+        const count = countUnique(converted as [number, number][], this.perDevice, this.perArea);
         this.setState({ chartData: count });
         // modifiedFeatures[0].set('label', count);
       }
@@ -180,7 +183,7 @@ export class MainPanel extends PureComponent<Props, State> {
 
       if (this.perDevice) {
         const converted = drawFeature.getCoordinates()[0].map((elm) => transform(elm, 'EPSG:3857', 'EPSG:4326'));
-        const countData = countUnique(converted as [number, number][], this.perDevice);
+        const countData = countUnique(converted as [number, number][], this.perDevice, this.perArea);
 
         this.setState({ chartData: countData });
         // ft.feature.set('label', count);
@@ -201,9 +204,13 @@ export class MainPanel extends PureComponent<Props, State> {
     this.select.setActive(false);
 
     if (this.props.data.series.length > 0) {
-      const { buffer } = this.props.data.series[0].fields[0].values as Buffer;
-      const { perDevice, heatSource } = processDataES(buffer);
+      const series = this.props.data.series as Frame[];
+      const { perDevice, perArea, heatSource, keys } = processData(series);
+
+      this.setState({ keys });
+
       this.perDevice = perDevice;
+      this.perArea = perArea;
 
       this.heatLayer = new Heatmap({
         source: heatSource,
@@ -223,17 +230,23 @@ export class MainPanel extends PureComponent<Props, State> {
   componentDidUpdate(prevProps: Props) {
     if (prevProps.data.series[0] !== this.props.data.series[0]) {
       this.perDevice = null;
+      this.perArea = {};
       this.map.removeLayer(this.heatLayer);
-      if (this.props.data.series.length == 0) {
-        this.setState({ chartData: [] });
+
+      const rawIndex = this.props.data.series.findIndex((serie) => serie.name == 'docs');
+
+      if (this.props.data.series.length == 0 || rawIndex == -1) {
+        this.setState((prevState) => ({ ...prevState, chartData: [], keys: [] }));
         return;
       }
 
       const { heat_blur, heat_radius, heat_opacity } = this.props.options;
-      const { buffer } = this.props.data.series[0].fields[0].values as Buffer;
 
-      const { perDevice, heatSource } = processDataES(buffer);
+      const series = this.props.data.series as Frame[];
+      const { perDevice, perArea, heatSource, keys } = processData(series);
+      this.setState({ keys });
       this.perDevice = perDevice;
+      this.perArea = perArea;
 
       this.heatLayer = new Heatmap({
         source: heatSource,
@@ -250,7 +263,7 @@ export class MainPanel extends PureComponent<Props, State> {
           const coordinates = feature.getGeometry().getCoordinates() as [number, number][][];
           const converted = coordinates[0].map((elm) => transform(elm, 'EPSG:3857', 'EPSG:4326'));
           if (this.perDevice) {
-            const countData = countUnique(converted as [number, number][], this.perDevice);
+            const countData = countUnique(converted as [number, number][], this.perDevice, this.perArea);
             this.setState({ chartData: countData });
             // feature.set('label', count);
           }
@@ -357,7 +370,7 @@ export class MainPanel extends PureComponent<Props, State> {
       height,
       options: { timezone },
     } = this.props;
-    const { featureName, isDrawing, chartData } = this.state;
+    const { featureName, isDrawing, chartData, keys } = this.state;
 
     return (
       <div style={{ width, height, position: 'relative' }}>
@@ -409,7 +422,7 @@ export class MainPanel extends PureComponent<Props, State> {
           >
             <ResponsiveBar
               data={chartData}
-              keys={['Customers']}
+              keys={keys}
               indexBy="timestamp"
               margin={{ top: 20, right: 30, bottom: 30, left: 50 }}
               padding={0.15}
@@ -430,7 +443,7 @@ export class MainPanel extends PureComponent<Props, State> {
                         textAnchor="middle"
                         dominantBaseline="middle"
                         style={{
-                          fontSize: 10,
+                          fontSize: 8,
                         }}
                         transform="rotate(-25)"
                       >
@@ -444,9 +457,6 @@ export class MainPanel extends PureComponent<Props, State> {
                 tickSize: 5,
                 tickPadding: 5,
                 tickRotation: 0,
-                // legend: 'customers',
-                // legendPosition: 'middle',
-                // legendOffset: -40,
               }}
               labelSkipWidth={12}
               labelSkipHeight={12}
@@ -462,8 +472,6 @@ export class MainPanel extends PureComponent<Props, State> {
                 );
               }}
               animate={true}
-              // motionStiffness={90}
-              // motionDamping={15}
             />
           </div>
         )}
