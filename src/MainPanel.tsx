@@ -107,6 +107,11 @@ export class MainPanel extends PureComponent<Props, State> {
       zIndex: 3,
     });
 
+    const min = fromLonLat([center_lon - 0.02, center_lat - 0.02]);
+
+    const max = fromLonLat([center_lon + 0.02, center_lat + 0.02]);
+    const extent = [...min, ...max] as [number, number, number, number];
+
     this.map = new Map({
       interactions: defaults({ dragPan: false, mouseWheelZoom: false, onFocusOnly: true }).extend([
         new DragPan({
@@ -122,6 +127,7 @@ export class MainPanel extends PureComponent<Props, State> {
       view: new View({
         center: fromLonLat([center_lon, center_lat]),
         zoom: zoom_level,
+        extent,
       }),
       target: this.id,
     });

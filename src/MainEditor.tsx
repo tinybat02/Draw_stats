@@ -8,11 +8,11 @@ export const MainEditor: React.FC<PanelEditorProps<PanelOptions>> = ({ options, 
   const [inputs, setInputs] = useState(options);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
+    const { name, value, type } = e.target;
 
     setInputs((prevState) => ({
       ...prevState,
-      [name]: value,
+      [name]: type == 'number' ? Number(value) : value,
     }));
   };
 

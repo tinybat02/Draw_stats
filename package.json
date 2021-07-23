@@ -14,7 +14,8 @@
     "@grafana/data": "next",
     "@grafana/toolkit": "next",
     "@grafana/ui": "next",
-    "@types/ol": "^6.3.1"
+    "@types/ol": "^6.3.1",
+    "tslib": "^2.1.0"
   },
   "dependencies": {
     "@nivo/bar": "^0.72.0",
