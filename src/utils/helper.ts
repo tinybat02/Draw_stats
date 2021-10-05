@@ -64,10 +64,10 @@ export const processData = (series: Frame[]) => {
 
     if (!obj[time_pivot]) obj[time_pivot] = {};
 
-    if (!obj[time_pivot][el.hash_id]) obj[time_pivot][el.hash_id] = [[el.longitude, el.latitude]];
-    // else obj[time_pivot][el.hash_id].push([el.longitude, el.latitude]);
-
-    heatPoints.push(new Feature(new OlPoint([el.longitude, el.latitude]).transform('EPSG:4326', 'EPSG:3857')));
+    if (!obj[time_pivot][el.hash_id]) {
+      obj[time_pivot][el.hash_id] = [[el.longitude, el.latitude]];
+      heatPoints.push(new Feature(new OlPoint([el.longitude, el.latitude]).transform('EPSG:4326', 'EPSG:3857')));
+    } else obj[time_pivot][el.hash_id].push([el.longitude, el.latitude]);
   });
 
   const perDevice: { [key: string]: { [key: string]: FeatureCollection<Point> } } = {};
