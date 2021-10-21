@@ -11,6 +11,7 @@ export interface PanelOptions {
   heat_opacity: string;
   timezone: string;
   geoJSON: GeoJSONFeatureCollection | null;
+  showBackGround: boolean;
 }
 
 export const defaults: PanelOptions = {
@@ -23,6 +24,7 @@ export const defaults: PanelOptions = {
   heat_opacity: '0.9',
   timezone: 'Europe/Berlin',
   geoJSON: null,
+  showBackGround: true,
 };
 
 export interface Buffer extends Vector {

@@ -66,6 +66,7 @@ export class MainPanel extends PureComponent<Props, State> {
       heat_blur,
       heat_opacity,
       geoJSON,
+      showBackGround,
     } = this.props.options;
 
     const carto = new TileLayer({
@@ -123,7 +124,7 @@ export class MainPanel extends PureComponent<Props, State> {
           condition: platformModifierKeyOnly,
         }),
       ]),
-      layers: [carto, this.drawLayer],
+      layers: showBackGround ? [carto, this.drawLayer] : [this.drawLayer],
       view: new View({
         center: fromLonLat([center_lon, center_lat]),
         zoom: zoom_level,
